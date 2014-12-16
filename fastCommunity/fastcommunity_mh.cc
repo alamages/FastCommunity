@@ -70,6 +70,7 @@
 //             and an indexing adjustment in printHeapTop10() in maxheap.h.
 //
 ////////////////////////////////////////////////////////////////////////
+#include <cstring>
 
 #include <iostream>
 #include <fstream>
@@ -299,7 +300,7 @@ int main(int argc,char * argv[]) {
 		// Merge the chosen communities
 		std::cout << "\tdQ = " << dQmax.m << "\t  |H| = " << h->heapSize() << "\n";
 		if (dq[dQmax.i].v == NULL || dq[dQmax.j].v == NULL) {
-			std::cout << "WARNING: invalid join (" << dQmax.i << " " << dQmax.j << ") found at top of heap\n"; cin >> pauseme;
+			std::cout << "WARNING: invalid join (" << dQmax.i << " " << dQmax.j << ") found at top of heap\n"; std::cin >> pauseme;
 		}
 		isupport = dq[dQmax.i].v->returnNodecount();
 		jsupport = dq[dQmax.j].v->returnNodecount();
