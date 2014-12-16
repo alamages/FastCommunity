@@ -270,12 +270,12 @@ int main(int argc,char * argv[]) {
 	buildDeltaQMatrix();							// builds dQ[] and h
 	
 	// initialize f_joins, f_support files
-	std::ofstream fjoins(ioparm.f_joins.c_str(), ios::trunc);
+	std::ofstream fjoins(ioparm.f_joins.c_str(), std::ios::trunc);
 	fjoins << -1 << "\t" << -1 << "\t" << Q[0] << "\t0\n";
 	fjoins.close();
 
 	if (ioparm.suppFlag) {
-		std::ofstream fsupp(ioparm.f_support.c_str(), ios::trunc);
+		std::ofstream fsupp(ioparm.f_support.c_str(), std::ios::trunc);
 		dqSupport();
 		fsupp << 0 << "\t" << supportTot << "\t" << supportAve << "\t" << 0 << "\t->\t" << 0 << "\n";
 		fsupp.close();
@@ -323,7 +323,7 @@ int main(int argc,char * argv[]) {
 		
 		// ---------------------------------
 		// Record join to file
-		std::ofstream fjoins(ioparm.f_joins.c_str(), ios::app);   // open file for writing the next join
+		std::ofstream fjoins(ioparm.f_joins.c_str(), std::ios::app);   // open file for writing the next join
 		fjoins << joins[t].x-1 << "\t" << joins[t].y-1 << "\t";	// convert to external format
 		if ((Q[t] > 0.0 && Q[t] < 0.0000000000001) || (Q[t] < 0.0 && Q[t] > -0.0000000000001))
 			{ fjoins << 0.0; } else { fjoins << Q[t]; }
@@ -345,7 +345,7 @@ int main(int argc,char * argv[]) {
 		// Record the support data to file
 		if (ioparm.suppFlag) {
 			dqSupport();
-			std::ofstream fsupp(ioparm.f_support.c_str(), ios::app);
+			std::ofstream fsupp(ioparm.f_support.c_str(), std::ios::app);
 			// time   remaining support   mean support   support_i --   support_j
 			fsupp << t << "\t" << supportTot << "\t" << supportAve << "\t" << isupport;
 			if (isupport < jsupport) { fsupp  << "\t->\t"; }
@@ -362,7 +362,7 @@ int main(int argc,char * argv[]) {
 	// ----------------------------------------------------------------------
 	// Record some results
 	t1 = time(&t1);
-	std::ofstream fout(ioparm.f_parm.c_str(), ios::app);
+	std::ofstream fout(ioparm.f_parm.c_str(), std::ios::app);
 	fout << "---MODULARITY---\n";
 	fout << "MAXQ------:\t" << Qmax.y  << "\n";
 	fout << "STEP------:\t" << Qmax.x  << "\n";
@@ -476,9 +476,9 @@ void buildFilenames() {
 	ioparm.f_group   = ioparm.d_out + ioparm.s_scratch + "-fc_"  + ioparm.s_label + ".groups";
 	ioparm.f_gstats  = ioparm.d_out + ioparm.s_scratch + "-fc_"  + ioparm.s_label + ".hist";
 	
-	if (true) { std::ofstream flog(ioparm.f_parm.c_str(), ios::trunc); flog.close(); }
+	if (true) { std::ofstream flog(ioparm.f_parm.c_str(), std::ios::trunc); flog.close(); }
 	time_t t; t = time(&t);
-	std::ofstream flog(ioparm.f_parm.c_str(), ios::app);
+	std::ofstream flog(ioparm.f_parm.c_str(), std::ios::app);
 	flog << "FASTCOMMUNITY_INFERENCE_ALGORITHM\n";
 	flog << "START-----:\t" << asctime(localtime(&t));
 	flog << "---FILES--------\n";
@@ -563,7 +563,7 @@ void groupListsStats() {
 	}
 	// convert histogram to pdf, and write it to disk
 	for (int i=0; i<gstats.maxsize+1; i++) { gstats.sizehist[i] = gstats.sizehist[i]/count; }
-	std::ofstream fgstat(ioparm.f_gstats.c_str(), ios::trunc);
+	std::ofstream fgstat(ioparm.f_gstats.c_str(), std::ios::trunc);
 	for (int i=gstats.minsize; i<gstats.maxsize+1; i++) {
 		fgstat << i << "\t" << gstats.sizehist[i] << "\n";
 	}
@@ -571,7 +571,7 @@ void groupListsStats() {
 	
 	// record some statistics
 	time_t t1; t1 = time(&t1);
-	std::ofstream fout(ioparm.f_parm.c_str(), ios::app);
+	std::ofstream fout(ioparm.f_parm.c_str(), std::ios::app);
 	fout << "---GROUPS-------\n";
 	fout << "NUMGROUPS-:\t" << gstats.numgroups  << "\n";
 	fout << "MINSIZE---:\t" << gstats.minsize    << "\n";
@@ -1008,7 +1008,7 @@ void readInputFile() {
 	// representation.
 	std::cout << " scanning input file for basic information." << std::endl;
 	std::cout << "  edgecount: [0]"<<std::endl;
-	ifstream fscan(ioparm.f_input.c_str(), ios::in);
+	ifstream fscan(ioparm.f_input.c_str(), std::ios::in);
 	while (fscan >> s >> f) {					// read friendship pair (s,f)
 		numlinks++;							// count number of edges
 		if (f < s) { t = s; s = f; f = t; }		// guarantee s < f
@@ -1039,7 +1039,7 @@ void readInputFile() {
 	
 	std::cout << " reparsing the input file to build network data structure." << std::endl;
 	std::cout << "  edgecount: [0]"<<std::endl;
-	ifstream fin(ioparm.f_input.c_str(), ios::in);
+	ifstream fin(ioparm.f_input.c_str(), std::ios::in);
 	while (fin >> s >> f) {
 		s++; f++;								// increment s,f to prevent using e[0]
 		if (f < s) { t = s; s = f; f = t; }		// guarantee s < f
@@ -1096,7 +1096,7 @@ void readInputFile() {
 	fin.close();
 	
 	// Now we record our work in the parameters file, and exit.
-	std::ofstream fout(ioparm.f_parm.c_str(), ios::app);
+	std::ofstream fout(ioparm.f_parm.c_str(), std::ios::app);
 	fout << "---NET_STATS----\n";
 	fout << "MAXID-----:\t" << gparm.maxid-2 << "\n";
 	fout << "NUMNODES--:\t" << numnodes << "\n";
@@ -1114,7 +1114,7 @@ void readInputFile() {
 void recordGroupLists() {
 
 	list *current;
-	std::ofstream fgroup(ioparm.f_group.c_str(), ios::trunc);
+	std::ofstream fgroup(ioparm.f_group.c_str(), std::ios::trunc);
 	for (int i=0; i<gparm.maxid; i++) {
 		if (c[i].valid) {
 			fgroup << "GROUP[ "<<i-1<<" ][ "<<c[i].size<<" ]\n";   // external format
@@ -1137,7 +1137,7 @@ void recordNetwork() {
 
 	dpair *list, *current, *temp;
 	
-	std::ofstream fnet(ioparm.f_net.c_str(), ios::trunc);
+	std::ofstream fnet(ioparm.f_net.c_str(), std::ios::trunc);
 	for (int i=0; i<gparm.maxid; i++) {
 		if (dq[i].heap_ptr != NULL) {
 			list    = dq[i].v->returnTreeAsList();			// get a list of items in dq[i].v
