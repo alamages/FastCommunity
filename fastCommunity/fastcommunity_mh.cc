@@ -81,8 +81,6 @@
 #include "maxheap.h"
 #include "vektor.h"
 
-using namespace std;
-
 // ------------------------------------------------------------------------------------
 // Edge object - defined by a pair of vertex indices and *edge pointer to next in linked-list
 class edge {
