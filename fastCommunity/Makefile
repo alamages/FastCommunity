@@ -8,7 +8,7 @@ RM = /bin/rm -f
 
 # compiler name and flags
 CCC = g++
-CCFLAGS = -O3 -fomit-frame-pointer -funroll-loops -fforce-addr -fexpensive-optimizations
+CCFLAGS = -fomit-frame-pointer -funroll-loops -fforce-addr -fexpensive-optimizations
 
 # loader flags
 LDFLAGS = 

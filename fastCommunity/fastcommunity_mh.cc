@@ -1009,7 +1009,7 @@ void readInputFile() {
 	// representation.
 	std::cout << " scanning input file for basic information." << std::endl;
 	std::cout << "  edgecount: [0]"<<std::endl;
-	ifstream fscan(ioparm.f_input.c_str(), std::ios::in);
+	std::ifstream fscan(ioparm.f_input.c_str(), std::ios::in);
 	while (fscan >> s >> f) {					// read friendship pair (s,f)
 		numlinks++;							// count number of edges
 		if (f < s) { t = s; s = f; f = t; }		// guarantee s < f
@@ -1040,7 +1040,7 @@ void readInputFile() {
 	
 	std::cout << " reparsing the input file to build network data structure." << std::endl;
 	std::cout << "  edgecount: [0]"<<std::endl;
-	ifstream fin(ioparm.f_input.c_str(), std::ios::in);
+	std::ifstream fin(ioparm.f_input.c_str(), std::ios::in);
 	while (fin >> s >> f) {
 		s++; f++;								// increment s,f to prevent using e[0]
 		if (f < s) { t = s; s = f; f = t; }		// guarantee s < f
