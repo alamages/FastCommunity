@@ -248,10 +248,10 @@ int main(int argc,char * argv[]) {
 	
 	// ----------------------------------------------------------------------
 	// Parse the command line, build filenames and then import the .pairs file
-	cout << "\nFast Community Inference.\n";
-	cout << "Copyright (c) 2004 by Aaron Clauset (aaron@cs.unm.edu)\n";
+	std::cout << "\nFast Community Inference.\n";
+	std::cout << "Copyright (c) 2004 by Aaron Clauset (aaron@cs.unm.edu)\n";
 	if (parseCommandLine(argc, argv)) {} else { return 0; }
-	cout << "\nimporting: " << ioparm.filename << endl;    // note the input filename
+	std::cout << "\nimporting: " << ioparm.filename << std::endl;    // note the input filename
 	buildFilenames();								// builds filename strings
 	readInputFile();								// gets adjacency matrix data
 	
@@ -266,7 +266,7 @@ int main(int argc,char * argv[]) {
 	Qmax.y = -4294967296.0;  Qmax.x = 0;
 	if (ioparm.cutstep > 0) { groupListsSetup(); }		// will need to track agglomerations
 	
-	cout << "now building initial dQ[]" << endl;
+	std::cout << "now building initial dQ[]" << std::endl;
 	buildDeltaQMatrix();							// builds dQ[] and h
 	
 	// initialize f_joins, f_support files
@@ -283,35 +283,35 @@ int main(int argc,char * argv[]) {
 	
 	// ----------------------------------------------------------------------
 	// Start FastCommunity algorithm
-	cout << "starting algorithm now." << endl;
+	std::cout << "starting algorithm now." << std::endl;
 	tuple  dQmax, dQnew;
 	int isupport, jsupport;
 	while (h->heapSize() > 2) {
 		
 		// ---------------------------------
 		// Find largest dQ
-		if (ioparm.textFlag > 0) { h->printHeapTop10(); cout << endl; }
+		if (ioparm.textFlag > 0) { h->printHeapTop10(); std::cout << std::endl; }
 		dQmax = h->popMaximum();					// select maximum dQ_ij // convention: insert i into j
 		if (dQmax.m < -4000000000.0) { break; }		// no more joins possible
-		cout << "Q["<<t-1<<"] = "<<Q[t-1];
+		std::cout << "Q["<<t-1<<"] = "<<Q[t-1];
 		
 		// ---------------------------------
 		// Merge the chosen communities
-		cout << "\tdQ = " << dQmax.m << "\t  |H| = " << h->heapSize() << "\n";
+		std::cout << "\tdQ = " << dQmax.m << "\t  |H| = " << h->heapSize() << "\n";
 		if (dq[dQmax.i].v == NULL || dq[dQmax.j].v == NULL) {
-			cout << "WARNING: invalid join (" << dQmax.i << " " << dQmax.j << ") found at top of heap\n"; cin >> pauseme;
+			std::cout << "WARNING: invalid join (" << dQmax.i << " " << dQmax.j << ") found at top of heap\n"; cin >> pauseme;
 		}
 		isupport = dq[dQmax.i].v->returnNodecount();
 		jsupport = dq[dQmax.j].v->returnNodecount();
 		if (isupport < jsupport) {
-			cout << "  join: " << dQmax.i << " -> " << dQmax.j << "\t";
-			cout << "(" << isupport << " -> " << jsupport << ")\n";
+			std::cout << "  join: " << dQmax.i << " -> " << dQmax.j << "\t";
+			std::cout << "(" << isupport << " -> " << jsupport << ")\n";
 			mergeCommunities(dQmax.i, dQmax.j);	// merge community i into community j
 			joins[t].x = dQmax.i;				// record merge of i(x) into j(y)
 			joins[t].y = dQmax.j;				// 
 		} else {								// 
-			cout << "  join: " << dQmax.i << " <- " << dQmax.j << "\t";
-			cout << "(" << isupport << " <- " << jsupport << ")\n";
+			std::cout << "  join: " << dQmax.i << " <- " << dQmax.j << "\t";
+			std::cout << "(" << isupport << " <- " << jsupport << ")\n";
 			dq[dQmax.i].heap_ptr = dq[dQmax.j].heap_ptr; // take community j's heap pointer
 			dq[dQmax.i].heap_ptr->i = dQmax.i;			//   mark it as i's
 			dq[dQmax.i].heap_ptr->j = dQmax.j;			//   mark it as i's
@@ -357,7 +357,7 @@ int main(int argc,char * argv[]) {
 		
 		t++;									// increment time
 	} // ------------- end community merging loop
-	cout << "Q["<<t-1<<"] = "<<Q[t-1] << endl;
+	std::cout << "Q["<<t-1<<"] = "<<Q[t-1] << std::endl;
 	
 	// ----------------------------------------------------------------------
 	// Record some results
@@ -369,7 +369,7 @@ int main(int argc,char * argv[]) {
 	fout << "EXIT------:\t" << asctime(localtime(&t1));
 	fout.close();
 
-	cout << "exited safely" << endl;
+	std::cout << "exited safely" << std::endl;
 	return 1;
 }
 
@@ -645,7 +645,7 @@ void mergeCommunities(int i, int j) {
 	current = list;							// store ptr to head of list
 	
 	if (ioparm.textFlag>1) {
-		cout << "stepping through the "<<dq[i].v->returnNodecount() << " elements of community " << i << endl;
+		std::cout << "stepping through the "<<dq[i].v->returnNodecount() << " elements of community " << i << std::endl;
 	}
 		
 	// ---------------------------------------------------------------------------------
@@ -656,7 +656,7 @@ void mergeCommunities(int i, int j) {
 	
 	while (current!=NULL) {						// insert list elements appropriately
 		
-		if (ioparm.textFlag>1) { cout << endl << "element["<<t<<"] from dq["<<i<<"] is ("<<current->x<<" "<<current->y<<")" << endl; }
+		if (ioparm.textFlag>1) { std::cout << std::endl << "element["<<t<<"] from dq["<<i<<"] is ("<<current->x<<" "<<current->y<<")" << std::endl; }
 
 		// If the element (x,dQ) is actually (j,dQ), then we can ignore it, since it will 
 		// correspond to an edge internal to the joined community (i,j) after the join.
@@ -669,37 +669,37 @@ void mergeCommunities(int i, int j) {
 			if (dq[j].v->findItem(current->x)) {
 				// CASE OF JIX-TRIANGLE
 				if (ioparm.textFlag>1) {
-					cout << "  (0) case of triangle: e_{"<<current->x<<" "<<j<<"} exists" << endl;
-					cout << "  (1) adding ("<<current->x<<" "<<current->y<<") to dq["<<current->x<<"] as ("<<j<<" "<<current->y<<")"<<endl;
+					std::cout << "  (0) case of triangle: e_{"<<current->x<<" "<<j<<"} exists" << std::endl;
+					std::cout << "  (1) adding ("<<current->x<<" "<<current->y<<") to dq["<<current->x<<"] as ("<<j<<" "<<current->y<<")"<<std::endl;
 				}
 				
 				// We first add (x,dQ) from [i] to [x] as (j,dQ), since [x] essentially now has
 				// two connections to the joined community [j].
 				if (ioparm.textFlag>1) {
-					cout << "  (1) heapsize = " << dq[current->x].v->returnHeaplimit() << endl; 
-					cout << "  (1) araysize = " << dq[current->x].v->returnArraysize() << endl; 
-					cout << "  (1) vectsize = " << dq[current->x].v->returnNodecount() << endl; }
+					std::cout << "  (1) heapsize = " << dq[current->x].v->returnHeaplimit() << std::endl; 
+					std::cout << "  (1) araysize = " << dq[current->x].v->returnArraysize() << std::endl; 
+					std::cout << "  (1) vectsize = " << dq[current->x].v->returnNodecount() << std::endl; }
 				dq[current->x].v->insertItem(j,current->y);			// (step 1)
 
 				// Then we need to delete the element (i,dQ) in [x], since [i] is now a
 				// part of [j] and [x] must reflect this connectivity.
-				if (ioparm.textFlag>1) { cout << "  (2) now we delete items associated with "<< i << " in dq["<<current->x<<"]" << endl; }
+				if (ioparm.textFlag>1) { std::cout << "  (2) now we delete items associated with "<< i << " in dq["<<current->x<<"]" << std::endl; }
 				dq[current->x].v->deleteItem(i);					// (step 2)
 
 				// After deleting an item, the tree may now have a new maximum element in [x],
 				// so we need to check it against the old maximum element. If it's new, then
 				// we need to update that value in the heap and reheapify.
 				newMax = dq[current->x].v->returnMaxStored();		// (step 3)
-				if (ioparm.textFlag>1) { cout << "  (3) and dq["<<current->x<<"]'s new maximum is (" << newMax.m <<" "<<newMax.j<< ") while the old maximum was (" << dq[current->x].heap_ptr->m <<" "<<dq[current->x].heap_ptr->j<<")"<< endl; }
+				if (ioparm.textFlag>1) { std::cout << "  (3) and dq["<<current->x<<"]'s new maximum is (" << newMax.m <<" "<<newMax.j<< ") while the old maximum was (" << dq[current->x].heap_ptr->m <<" "<<dq[current->x].heap_ptr->j<<")"<< std::endl; }
 //				if (newMax.m > dq[current->x].heap_ptr->m || dq[current->x].heap_ptr->j==i) {
 					h->updateItem(dq[current->x].heap_ptr, newMax);
-					if (ioparm.textFlag>1) { cout << "  updated dq["<<current->x<<"].heap_ptr to be (" << dq[current->x].heap_ptr->m <<" "<<dq[current->x].heap_ptr->j<<")"<< endl; }
+					if (ioparm.textFlag>1) { std::cout << "  updated dq["<<current->x<<"].heap_ptr to be (" << dq[current->x].heap_ptr->m <<" "<<dq[current->x].heap_ptr->j<<")"<< std::endl; }
 //				}
 // Change suggested by Janne Aukia (jaukia@cc.hut.fi) on 12 Oct 2006
 				
 				// Finally, we must insert (x,dQ) into [j] to note that [j] essentially now
 				// has two connections with its neighbor [x].
-				if (ioparm.textFlag>1) { cout << "  (4) adding ("<<current->x<<" "<<current->y<<") to dq["<<j<<"] as ("<<current->x<<" "<<current->y<<")"<<endl; }
+				if (ioparm.textFlag>1) { std::cout << "  (4) adding ("<<current->x<<" "<<current->y<<") to dq["<<j<<"] as ("<<current->x<<" "<<current->y<<")"<<std::endl; }
 				dq[j].v->insertItem(current->x,current->y);		// (step 4)
 				
 			} else {
@@ -708,8 +708,8 @@ void mergeCommunities(int i, int j) {
 				// The first thing we need to do is calculate the adjustment factor (+) for updating elements.
 				double axaj = -2.0*a[current->x]*a[j];
 				if (ioparm.textFlag>1) {
-					cout << "  (0) case of jix chain: e_{"<<current->x<<" "<<j<<"} absent" << endl;
-					cout << "  (1) adding ("<<current->x<<" "<<current->y<<") to dq["<<current->x<<"] as ("<<j<<" "<<current->y+axaj<<")"<<endl;
+					std::cout << "  (0) case of jix chain: e_{"<<current->x<<" "<<j<<"} absent" << std::endl;
+					std::cout << "  (1) adding ("<<current->x<<" "<<current->y<<") to dq["<<current->x<<"] as ("<<j<<" "<<current->y+axaj<<")"<<std::endl;
 				}
 				
 				// Then we insert a new element (j,dQ+) of [x] to represent that [x] has
@@ -718,23 +718,23 @@ void mergeCommunities(int i, int j) {
 				
 				// Now the deletion of the connection from [x] to [i], since [i] is now
 				// a part of [j]
-				if (ioparm.textFlag>1) { cout << "  (2) now we delete items associated with "<< i << " in dq["<<current->x<<"]" << endl; }
+				if (ioparm.textFlag>1) { std::cout << "  (2) now we delete items associated with "<< i << " in dq["<<current->x<<"]" << std::endl; }
 				dq[current->x].v->deleteItem(i);					// (step 2)
 				
 				// Deleting that element may have changed the maximum element for [x], so we
 				// need to check if the maximum of [x] is new (checking it against the value
 				// in the heap) and then update the maximum in the heap if necessary.
 				newMax = dq[current->x].v->returnMaxStored();		// (step 3)
-				if (ioparm.textFlag>1) { cout << "  (3) and dq["<<current->x<<"]'s new maximum is (" << newMax.m <<" "<<newMax.j<< ") while the old maximum was (" << dq[current->x].heap_ptr->m <<" "<<dq[current->x].heap_ptr->j<<")"<< endl; }
+				if (ioparm.textFlag>1) { std::cout << "  (3) and dq["<<current->x<<"]'s new maximum is (" << newMax.m <<" "<<newMax.j<< ") while the old maximum was (" << dq[current->x].heap_ptr->m <<" "<<dq[current->x].heap_ptr->j<<")"<< std::endl; }
 //				if (newMax.m > dq[current->x].heap_ptr->m || dq[current->x].heap_ptr->j==i) {
 					h->updateItem(dq[current->x].heap_ptr, newMax);
-					if (ioparm.textFlag>1) { cout << "  updated dq["<<current->x<<"].heap_ptr to be (" << dq[current->x].heap_ptr->m <<" "<<dq[current->x].heap_ptr->j<<")"<< endl; }
+					if (ioparm.textFlag>1) { std::cout << "  updated dq["<<current->x<<"].heap_ptr to be (" << dq[current->x].heap_ptr->m <<" "<<dq[current->x].heap_ptr->j<<")"<< std::endl; }
 //				}
 // Change suggested by Janne Aukia (jaukia@cc.hut.fi) on 12 Oct 2006
 					
 				// Finally, we insert a new element (x,dQ+) of [j] to represent [j]'s new
 				// connection to [x]
-				if (ioparm.textFlag>1) { cout << "  (4) adding ("<<current->x<<" "<<current->y<<") to dq["<<j<<"] as ("<<current->x<<" "<<current->y+axaj<<")"<<endl; }
+				if (ioparm.textFlag>1) { std::cout << "  (4) adding ("<<current->x<<" "<<current->y<<") to dq["<<j<<"] as ("<<current->x<<" "<<current->y+axaj<<")"<<std::endl; }
 				dq[j].v->insertItem(current->x,current->y + axaj);	// (step 4)
 
 			}    // if (dq[j].v->findItem(current->x))
@@ -751,9 +751,9 @@ void mergeCommunities(int i, int j) {
 	// We've now finished going through all of [i]'s connections, so we need to delete the element
 	// of [j] which represented the connection to [i]
 	if (ioparm.textFlag>1) {
-		cout << endl;
-		cout << "  whoops. no more elements for community "<< i << endl;
-		cout << "  (5) now deleting items associated with "<<i<< " (the deleted community) in dq["<<j<<"]" << endl;
+		std::cout << std::endl;
+		std::cout << "  whoops. no more elements for community "<< i << std::endl;
+		std::cout << "  (5) now deleting items associated with "<<i<< " (the deleted community) in dq["<<j<<"]" << std::endl;
 	}
 
 	if (ioparm.textFlag>1) { dq[j].v->printTree(); }
@@ -763,9 +763,9 @@ void mergeCommunities(int i, int j) {
 	// element of [i], so we need to check to update the maximum value of [j] that
 	// is in the heap.
 	newMax = dq[j].v->returnMaxStored();			// (step 6)
-	if (ioparm.textFlag>1) { cout << "  (6) dq["<<j<<"]'s old maximum was (" << dq[j].heap_ptr->m <<" "<< dq[j].heap_ptr->j<< ")\t"<<dq[j].heap_ptr<<endl; }
+	if (ioparm.textFlag>1) { std::cout << "  (6) dq["<<j<<"]'s old maximum was (" << dq[j].heap_ptr->m <<" "<< dq[j].heap_ptr->j<< ")\t"<<dq[j].heap_ptr<<std::endl; }
 	h->updateItem(dq[j].heap_ptr, newMax);
-	if (ioparm.textFlag>1) { cout << "      dq["<<j<<"]'s new maximum  is (" << dq[j].heap_ptr->m <<" "<< dq[j].heap_ptr->j<< ")\t"<<dq[j].heap_ptr<<endl; }
+	if (ioparm.textFlag>1) { std::cout << "      dq["<<j<<"]'s new maximum  is (" << dq[j].heap_ptr->m <<" "<< dq[j].heap_ptr->j<< ")\t"<<dq[j].heap_ptr<<std::endl; }
 	if (ioparm.textFlag>1) { dq[j].v->printTree(); }
 	
 	// ---------------------------------------------------------------------------------
@@ -780,10 +780,10 @@ void mergeCommunities(int i, int j) {
 	list = dq[j].v->returnTreeAsList();			// get a list of items in dq[j].v
 	current = list;							// store ptr to head of list
 	t       = 1;
-	if (ioparm.textFlag>1) { cout << "\nstepping through the "<<dq[j].v->returnNodecount() << " elements of community " << j << endl; }
+	if (ioparm.textFlag>1) { std::cout << "\nstepping through the "<<dq[j].v->returnNodecount() << " elements of community " << j << std::endl; }
 
 	while (current != NULL) {					// insert list elements appropriately
-		if (ioparm.textFlag>1) { cout << endl << "element["<<t<<"] from dq["<<j<<"] is ("<<current->x<<" "<<current->y<<")" << endl; }
+		if (ioparm.textFlag>1) { std::cout << std::endl << "element["<<t<<"] from dq["<<j<<"] is ("<<current->x<<" "<<current->y<<")" << std::endl; }
 
 		// If the element (x,dQ) of [j] is not also (i,dQ) (which it shouldn't be since we've
 		// already deleted it previously in this function), and [i] does not also have an
@@ -794,8 +794,8 @@ void mergeCommunities(int i, int j) {
 			// First we must calculate the adjustment factor (+).
 			double axai = -2.0*a[current->x]*a[i];
 			if (ioparm.textFlag>1) {
-				cout << "  (0) case of ijx chain: e_{"<<current->x<<" "<<i<<"} absent" << endl;
-				cout << "  (1) updating dq["<<current->x<<"] to ("<<j<<" "<<current->y+axai<<")"<<endl;
+				std::cout << "  (0) case of ijx chain: e_{"<<current->x<<" "<<i<<"} absent" << std::endl;
+				std::cout << "  (1) updating dq["<<current->x<<"] to ("<<j<<" "<<current->y+axai<<")"<<std::endl;
 			}
 			
 			// Now we must add an element (j,+) to [x], since [x] has essentially now acquired
@@ -804,20 +804,20 @@ void mergeCommunities(int i, int j) {
 
 			// This new item may have changed the maximum dQ of [x], so we must update it.
 			newMax = dq[current->x].v->returnMaxStored();	// (step 3)
-			if (ioparm.textFlag>1) { cout << "  (3) dq["<<current->x<<"]'s old maximum was (" << dq[current->x].heap_ptr->m <<" "<< dq[current->x].heap_ptr->j<< ")\t"<<dq[current->x].heap_ptr<<endl; }
+			if (ioparm.textFlag>1) { std::cout << "  (3) dq["<<current->x<<"]'s old maximum was (" << dq[current->x].heap_ptr->m <<" "<< dq[current->x].heap_ptr->j<< ")\t"<<dq[current->x].heap_ptr<<std::endl; }
 			h->updateItem(dq[current->x].heap_ptr, newMax);
 			if (ioparm.textFlag>1) {
-				cout << "      dq["<<current->x<<"]'s new maximum  is (" << dq[current->x].heap_ptr->m <<" "<< dq[current->x].heap_ptr->j<< ")\t"<<dq[current->x].heap_ptr<<endl;
-				cout << "  (4) updating dq["<<j<<"] to ("<<current->x<<" "<<current->y+axai<<")"<<endl;
+				std::cout << "      dq["<<current->x<<"]'s new maximum  is (" << dq[current->x].heap_ptr->m <<" "<< dq[current->x].heap_ptr->j<< ")\t"<<dq[current->x].heap_ptr<<std::endl;
+				std::cout << "  (4) updating dq["<<j<<"] to ("<<current->x<<" "<<current->y+axai<<")"<<std::endl;
 			}
 
 			// And we must add an element (x,+) to [j], since [j] as acquired a new connection
 			// to [x] (via absorbing [i]).
 			dq[j].v->insertItem(current->x, axai);			// (step 4)
 			newMax = dq[j].v->returnMaxStored();			// (step 6)
-			if (ioparm.textFlag>1) { cout << "  (6) dq["<<j<<"]'s old maximum was (" << dq[j].heap_ptr->m <<" "<< dq[j].heap_ptr->j<< ")\t"<<dq[j].heap_ptr<<endl; }
+			if (ioparm.textFlag>1) { std::cout << "  (6) dq["<<j<<"]'s old maximum was (" << dq[j].heap_ptr->m <<" "<< dq[j].heap_ptr->j<< ")\t"<<dq[j].heap_ptr<<std::endl; }
 			h->updateItem(dq[j].heap_ptr, newMax);
-			if (ioparm.textFlag>1) { cout << "      dq["<<j<<"]'s new maximum  is (" << dq[j].heap_ptr->m <<" "<< dq[j].heap_ptr->j<< ")\t"<<dq[j].heap_ptr<<endl; }
+			if (ioparm.textFlag>1) { std::cout << "      dq["<<j<<"]'s new maximum  is (" << dq[j].heap_ptr->m <<" "<< dq[j].heap_ptr->j<< ")\t"<<dq[j].heap_ptr<<std::endl; }
 
 		}    //  (current->x != i && !dq[i].v->findItem(current->x))
 		
@@ -832,9 +832,9 @@ void mergeCommunities(int i, int j) {
 	// we need to update the a[] vector to reflect the change in fractions of edges after
 	// the join operation.
 	if (ioparm.textFlag>1) {
-		cout << endl;
-		cout << "  whoops. no more elements for community "<< j << endl;
-		cout << "  (7) updating a["<<j<<"] = " << a[i] + a[j] << " and zeroing out a["<<i<<"]" << endl;
+		std::cout << std::endl;
+		std::cout << "  whoops. no more elements for community "<< j << std::endl;
+		std::cout << "  (7) updating a["<<j<<"] = " << a[i] + a[j] << " and zeroing out a["<<i<<"]" << std::endl;
 	}
 	a[j] += a[i];								// (step 7)
 	a[i] = 0.0;
@@ -844,7 +844,7 @@ void mergeCommunities(int i, int j) {
 	// need it again, and it'll conserve memory. For safety, we also set the pointers
 	// to be NULL to prevent inadvertent access to the deleted data later on.
 
-	if (ioparm.textFlag>1) { cout << "--> finished merging community "<<i<<" into community "<<j<<" and housekeeping.\n\n"; }
+	if (ioparm.textFlag>1) { std::cout << "--> finished merging community "<<i<<" into community "<<j<<" and housekeeping.\n\n"; }
 	delete dq[i].v;							// (step 8)
 	dq[i].v        = NULL;						// (step 8)
 	dq[i].heap_ptr = NULL;						//
@@ -872,24 +872,24 @@ bool parseCommandLine(int argc,char * argv[]) {
 	// -c <int>		record the aglomerated network at step <int>
 	
 	if (argc <= 1) { // if no arguments, return statement about program usage.
-		cout << "\nThis program runs the fast community structure inference algorithm due to ";
-		cout << "Clauset, Newman and Moore on an input graph in the .pairs format. This version ";
-		cout << "is the full max-heap version originally described in cond-mat/0408187. The program ";
-		cout << "requires the input network connectivity to be formatted in the following specific ";
-		cout << "way: the graph must be simple and connected, where each edge is written on ";
-		cout << "a line in the format 'u v' (e.g., 3481 3483).\n";
-		cout << "To run the program, you must specify the input network file (-f file.pairs). ";
-		cout << "Additionally, you can differentiate runs on the same input file with a label ";
-		cout << "(-l test_run) which is imbedded in all corresponding output files. ";
-		cout << "Because the algorithm is deterministic, you can specify a point (-c C) at which to ";
-		cout << "cut the dendrogram; the program will write out various information about the clustered ";
-		cout << "network: a list of clusters, the clustered connectivity, and the cluster size ";
-		cout << "distribution. Typically, one wants this value to be the time at which modularity Q ";
-		cout << "was maximized (that time is recorded in the .info file for a given run).\n";
-		cout << "Examples:\n";
-		cout << "  ./FastCommunity -f network.pairs -l test_run\n";
-		cout << "  ./FastCommunity -f network.pairs -l test_run -c 1232997\n";
-		cout << "\n";
+		std::cout << "\nThis program runs the fast community structure inference algorithm due to ";
+		std::cout << "Clauset, Newman and Moore on an input graph in the .pairs format. This version ";
+		std::cout << "is the full max-heap version originally described in cond-mat/0408187. The program ";
+		std::cout << "requires the input network connectivity to be formatted in the following specific ";
+		std::cout << "way: the graph must be simple and connected, where each edge is written on ";
+		std::cout << "a line in the format 'u v' (e.g., 3481 3483).\n";
+		std::cout << "To run the program, you must specify the input network file (-f file.pairs). ";
+		std::cout << "Additionally, you can differentiate runs on the same input file with a label ";
+		std::cout << "(-l test_run) which is imbedded in all corresponding output files. ";
+		std::cout << "Because the algorithm is deterministic, you can specify a point (-c C) at which to ";
+		std::cout << "cut the dendrogram; the program will write out various information about the clustered ";
+		std::cout << "network: a list of clusters, the clustered connectivity, and the cluster size ";
+		std::cout << "distribution. Typically, one wants this value to be the time at which modularity Q ";
+		std::cout << "was maximized (that time is recorded in the .info file for a given run).\n";
+		std::cout << "Examples:\n";
+		std::cout << "  ./FastCommunity -f network.pairs -l test_run\n";
+		std::cout << "  ./FastCommunity -f network.pairs -l test_run -c 1232997\n";
+		std::cout << "\n";
 		return false;
 	}
 
@@ -897,42 +897,42 @@ bool parseCommandLine(int argc,char * argv[]) {
 		temp = argv[argct];
 		
 		if (temp == "-files") {
-			cout << "\nBasic files generated:\n";
-			cout << "-- .INFO\n";
-			cout << "   Various information about the program's running. Includes a listing of ";
-			cout << "the files it generates, number of vertices and edges processed, the maximum ";
-			cout << "modularity found and the corresponding step (you can re-run the program with ";
-			cout << "this value in the -c argument to have it output the contents of the clusters, ";
-			cout << "etc. when it reaches that step again (not the most efficient solution, but it ";
-			cout << "works)), start/stop time, and when -c is used, it records some information about ";
-			cout << "the distribution of cluster sizes.\n";
-			cout << "-- .JOINS\n";
-			cout << "   The dendrogram and modularity information from the algorithm. The file format ";
-			cout << "is tab-delimited columns of data, where the columns are:\n";
-			cout << " 1. the community index which absorbs\n";
-			cout << " 2. the community index which was absorbed\n";
-			cout << " 3. the modularity value Q after the join\n";
-			cout << " 4. the time step of the join\n";
-			cout << "\nOptional files generated (at time t=C when -c C argument used):\n";
-			cout << "-- .WPAIRS\n";
-			cout << "   The connectivity of the clustered graph in a .wpairs file format ";
-			cout << "(i.e., weighted edges). The edge weights should be the dQ values associated ";
-			cout << "with that clustered edge at time C. From this format, it's easy to ";
-			cout << "convert into another for visualization (e.g., pajek's .net format).\n";
-			cout << "-- .HIST\n";
-			cout << "   The size distribution of the clusters.\n";
-			cout << "-- .GROUPS\n";
-			cout << "   A list of each group and the names of the vertices which compose it (this is ";
-			cout << "particularly useful for verifying that the clustering makes sense - tedious but ";
-			cout << "important).\n";
-			cout << "\n";
+			std::cout << "\nBasic files generated:\n";
+			std::cout << "-- .INFO\n";
+			std::cout << "   Various information about the program's running. Includes a listing of ";
+			std::cout << "the files it generates, number of vertices and edges processed, the maximum ";
+			std::cout << "modularity found and the corresponding step (you can re-run the program with ";
+			std::cout << "this value in the -c argument to have it output the contents of the clusters, ";
+			std::cout << "etc. when it reaches that step again (not the most efficient solution, but it ";
+			std::cout << "works)), start/stop time, and when -c is used, it records some information about ";
+			std::cout << "the distribution of cluster sizes.\n";
+			std::cout << "-- .JOINS\n";
+			std::cout << "   The dendrogram and modularity information from the algorithm. The file format ";
+			std::cout << "is tab-delimited columns of data, where the columns are:\n";
+			std::cout << " 1. the community index which absorbs\n";
+			std::cout << " 2. the community index which was absorbed\n";
+			std::cout << " 3. the modularity value Q after the join\n";
+			std::cout << " 4. the time step of the join\n";
+			std::cout << "\nOptional files generated (at time t=C when -c C argument used):\n";
+			std::cout << "-- .WPAIRS\n";
+			std::cout << "   The connectivity of the clustered graph in a .wpairs file format ";
+			std::cout << "(i.e., weighted edges). The edge weights should be the dQ values associated ";
+			std::cout << "with that clustered edge at time C. From this format, it's easy to ";
+			std::cout << "convert into another for visualization (e.g., pajek's .net format).\n";
+			std::cout << "-- .HIST\n";
+			std::cout << "   The size distribution of the clusters.\n";
+			std::cout << "-- .GROUPS\n";
+			std::cout << "   A list of each group and the names of the vertices which compose it (this is ";
+			std::cout << "particularly useful for verifying that the clustering makes sense - tedious but ";
+			std::cout << "important).\n";
+			std::cout << "\n";
 			return false;
 		} else if (temp == "-f") {			// input file name
 			argct++;
 			temp = argv[argct];
 			ext = ".pairs";
 			pos = temp.find(ext,0);
-			if (pos == string::npos) { cout << " Error: Input file must have terminating .pairs extension.\n"; return false; }
+			if (pos == string::npos) { std::cout << " Error: Input file must have terminating .pairs extension.\n"; return false; }
 			ext = "/";
 			count = 0; pos = string::npos;
 			for (int i=0; i < temp.size(); i++) { if (temp[i] == '/') { pos = i; } }
@@ -957,13 +957,13 @@ bool parseCommandLine(int argc,char * argv[]) {
 			if (argct < argc) {
 				along = strtol(argv[argct],endptr,10);
 				ioparm.timer = atoi(argv[argct]);
-				cout << ioparm.timer << endl;
+				std::cout << ioparm.timer << std::endl;
 				if (ioparm.timer == 0 || strlen(argv[argct]) > temp.length()) {
-					cout << " Warning: malformed modifier for -t; using default.\n"; argct--;
+					std::cout << " Warning: malformed modifier for -t; using default.\n"; argct--;
 					ioparm.timer = 20;
 				} 
 			} else {
-				cout << " Warning: missing modifier for -t argument; using default.\n"; argct--;
+				std::cout << " Warning: missing modifier for -t argument; using default.\n"; argct--;
 			}
 		} else if (temp == "-c") {	// cut value
 			argct++;
@@ -971,17 +971,17 @@ bool parseCommandLine(int argc,char * argv[]) {
 //				along = strtol(argv[argct],endptr,10);
 				ioparm.cutstep = atoi(argv[argct]);
 				if (ioparm.cutstep == 0) {
-					cout << " Warning: malformed modifier for -c; disabling output.\n"; argct--;
+					std::cout << " Warning: malformed modifier for -c; disabling output.\n"; argct--;
 				} 
 			} else {
-				cout << " Warning: missing modifier for -t argument; using default.\n"; argct--;
+				std::cout << " Warning: missing modifier for -t argument; using default.\n"; argct--;
 			}
 		}
 		else if (temp == "-s")		{    ioparm.suppFlag = true;		}
 		else if (temp == "-v")		{    ioparm.textFlag = 1;		}
 		else if (temp == "--v")		{    ioparm.textFlag = 2;		}
 		else if (temp == "---v")		{    ioparm.textFlag = 3;		}
-		else {  cout << "Unknown commandline argument: " << argv[argct] << endl; }
+		else {  std::cout << "Unknown commandline argument: " << argv[argct] << std::endl; }
 		argct++;
 	}
 		
@@ -1006,8 +1006,8 @@ void readInputFile() {
 	// First scan through the input file to discover the largest node id. We need to
 	// do this so that we can allocate a properly sized array for the sparse matrix
 	// representation.
-	cout << " scanning input file for basic information." << endl;
-	cout << "  edgecount: [0]"<<endl;
+	std::cout << " scanning input file for basic information." << std::endl;
+	std::cout << "  edgecount: [0]"<<std::endl;
 	ifstream fscan(ioparm.f_input.c_str(), ios::in);
 	while (fscan >> s >> f) {					// read friendship pair (s,f)
 		numlinks++;							// count number of edges
@@ -1015,7 +1015,7 @@ void readInputFile() {
 		if (f > numnodes) { numnodes = f; }		// track largest node index
 
 		if (t2-t1>ioparm.timer) {				// check timer; if necessarsy, display
-			cout << "  edgecount: ["<<numlinks<<"]"<<endl;
+			std::cout << "  edgecount: ["<<numlinks<<"]"<<std::endl;
 			t1 = t2;							// 
 			ioparm.timerFlag = true;				// 
 		}									// 
@@ -1023,22 +1023,22 @@ void readInputFile() {
 		
 	}
 	fscan.close();
-	cout << "  edgecount: ["<<numlinks<<"] total (first pass)"<<endl;
+	std::cout << "  edgecount: ["<<numlinks<<"] total (first pass)"<<std::endl;
 	gparm.maxid = numnodes+2;					// store maximum index
 	elist = new edge [2*numlinks];				// create requisite number of edges
 	int ecounter = 0;							// index of next edge of elist to be used
 
 	// Now that we know numnodes, we can allocate the space for the sparse matrix, and
 	// then reparse the file, adding edges as necessary.
-	cout << " allocating space for network." << endl;
+	std::cout << " allocating space for network." << std::endl;
 	e        = new  edge [gparm.maxid];			// (unordered) sparse adjacency matrix
 	last     = new edge* [gparm.maxid];			// list of pointers to the last edge in each row
 	numnodes = 0;								// numnodes now counts number of actual used node ids
 	numlinks = 0;								// numlinks now counts number of bi-directional edges created
 	ioparm.timerFlag = false;					// reset timer
 	
-	cout << " reparsing the input file to build network data structure." << endl;
-	cout << "  edgecount: [0]"<<endl;
+	std::cout << " reparsing the input file to build network data structure." << std::endl;
+	std::cout << "  edgecount: [0]"<<std::endl;
 	ifstream fin(ioparm.f_input.c_str(), ios::in);
 	while (fin >> s >> f) {
 		s++; f++;								// increment s,f to prevent using e[0]
@@ -1085,14 +1085,14 @@ void readInputFile() {
 		}									
 		existsFlag = false;						// reset existsFlag
 		if (t2-t1>ioparm.timer) {				// check timer; if necessarsy, display
-			cout << "  edgecount: ["<<numlinks<<"]"<<endl;
+			std::cout << "  edgecount: ["<<numlinks<<"]"<<std::endl;
 			t1 = t2;							// 
 			ioparm.timerFlag = true;				// 
 		}									// 
 		t2=time(&t2);							// 
 		
 	}
-	cout << "  edgecount: ["<<numlinks<<"] total (second pass)"<<endl;
+	std::cout << "  edgecount: ["<<numlinks<<"] total (second pass)"<<std::endl;
 	fin.close();
 	
 	// Now we record our work in the parameters file, and exit.
