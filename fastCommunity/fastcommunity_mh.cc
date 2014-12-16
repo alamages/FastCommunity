@@ -196,18 +196,18 @@ struct outparameters {
 	bool			suppFlag;			// T: no support(t) file
 								// F: yes support(t) file
 	short int		fileFlag;			// 
-	string		filename;			// name of input file
-	string		d_in;			// (dir ) directory for input file
-	string		d_out;			// (dir ) director for output file
-	string		f_parm;			// (file) parameters output
-	string		f_input;			// (file) input data file
-	string		f_joins;			// (file) community hierarchy
-	string		f_support;		// (file) dQ support as a function of time
-	string		f_net;			// (file) .wpairs file for .cutstep network
-	string		f_group;			// (file) .list of indices in communities at .cutstep
-	string		f_gstats;			// (file) distribution of community sizes at .cutstep
-	string		s_label;			// (temp) text label for run
-	string		s_scratch;		// (temp) text for building filenames
+	std::string		filename;			// name of input file
+	std::string		d_in;			// (dir ) directory for input file
+	std::string		d_out;			// (dir ) director for output file
+	std::string		f_parm;			// (file) parameters output
+	std::string		f_input;			// (file) input data file
+	std::string		f_joins;			// (file) community hierarchy
+	std::string		f_support;		// (file) dQ support as a function of time
+	std::string		f_net;			// (file) .wpairs file for .cutstep network
+	std::string		f_group;			// (file) .list of indices in communities at .cutstep
+	std::string		f_gstats;			// (file) distribution of community sizes at .cutstep
+	std::string		s_label;			// (temp) text label for run
+	std::string		s_scratch;		// (temp) text for building filenames
 	int			timer;			// timer for displaying progress reports 
 	bool			timerFlag;		// flag for setting timer
 	int			cutstep;			// step at which to record aglomerated network
@@ -252,7 +252,7 @@ int main(int argc,char * argv[]) {
 	std::cout << "Copyright (c) 2004 by Aaron Clauset (aaron@cs.unm.edu)\n";
 	if (parseCommandLine(argc, argv)) {} else { return 0; }
 	std::cout << "\nimporting: " << ioparm.filename << std::endl;    // note the input filename
-	buildFilenames();								// builds filename strings
+	buildFilenames();								// builds filename std::strings
 	readInputFile();								// gets adjacency matrix data
 	
 	// ----------------------------------------------------------------------
@@ -857,8 +857,8 @@ void mergeCommunities(int i, int j) {
 
 bool parseCommandLine(int argc,char * argv[]) {
 	int argct = 1;
-	string temp, ext;
-	string::size_type pos;
+	std::string temp, ext;
+	std::string::size_type pos;
 	char **endptr;
 	long along;
 	int count;
@@ -932,11 +932,11 @@ bool parseCommandLine(int argc,char * argv[]) {
 			temp = argv[argct];
 			ext = ".pairs";
 			pos = temp.find(ext,0);
-			if (pos == string::npos) { std::cout << " Error: Input file must have terminating .pairs extension.\n"; return false; }
+			if (pos == std::string::npos) { std::cout << " Error: Input file must have terminating .pairs extension.\n"; return false; }
 			ext = "/";
-			count = 0; pos = string::npos;
+			count = 0; pos = std::string::npos;
 			for (int i=0; i < temp.size(); i++) { if (temp[i] == '/') { pos = i; } }
-			if (pos == string::npos) {
+			if (pos == std::string::npos) {
 				ioparm.d_in = "";
 				ioparm.filename = temp;
 			} else {
