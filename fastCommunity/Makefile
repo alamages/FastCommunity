@@ -4,7 +4,7 @@
 
 #### local macros
 # remove without fussing about it
-RM = /bin/rm -f
+RM = rm -f
 
 # compiler name and flags
 CCC = g++
@@ -26,6 +26,8 @@ INCLUDES =
 ### headers
 HEADERS = maxheap.h vektor.h
 
+INSTALL_DIR = /usr/local/bin
+
 ### targets, dependencies and actions
 $(EXEC): $(OBJECTS) Makefile
 	$(LINK.cc) $(CCFLAGS) -o $(EXEC) $(OBJECTS)
@@ -35,6 +37,8 @@ depend:
 	makedepend $(INCLUDES) $(HEADERS) $(SOURCES)
 
 ### housekeeping
+install:
+	cp $(EXEC) $(INSTALL_DIR)
 
 clean:
 	$(RM) *.o *~
