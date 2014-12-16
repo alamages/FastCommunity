@@ -320,7 +320,7 @@ int  maxheap::heapSize()    { return heaplimit-1; }
 
 void maxheap::printHeap() {
 	for (int i=1; i<heaplimit; i++) {
-		cout << A[i].d <<"\t["<<A[i].d->k<<"]\tdQ = "<<A[i].d->m<<"\t"<<A[i].d->i<<" -> "<<A[i].d->j<<"\n"; }
+		std::cout << A[i].d <<"\t["<<A[i].d->k<<"]\tdQ = "<<A[i].d->m<<"\t"<<A[i].d->i<<" -> "<<A[i].d->j<<"\n"; }
 	return;
 }
 
@@ -328,7 +328,7 @@ void maxheap::printHeapTop10() {
 	int limit;
 	if (heaplimit>10) { limit = 11; } else { limit = heaplimit; }
 	for (int i=1; i<limit; i++) {
-		cout << A[i].d <<"\t["<<A[i].d->k<<"]\tdQ = "<<A[i].d->m<<"\t"<<A[i].d->i<<" -> "<<A[i].d->j<<"\n"; }
+		std::cout << A[i].d <<"\t["<<A[i].d->k<<"]\tdQ = "<<A[i].d->m<<"\t"<<A[i].d->i<<" -> "<<A[i].d->j<<"\n"; }
 	return;
 }
 

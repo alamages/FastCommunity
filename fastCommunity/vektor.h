@@ -533,10 +533,10 @@ void vektor::rotateRight(element *y) {
 // public
 void vektor::printTree() {
 	tuple max = heap->returnMaximum();
-	cout << "\nTREE SIZE = " << support << endl;
-	cout << "HEAP SIZE = " << heap->heapSize() << endl;
-	cout << "MAXIMUM (" << max.j<< " " << max.m << ")" << endl;
-	cout << "# "; printSubTree(root);
+	std::cout << "\nTREE SIZE = " << support << std::endl;
+	std::cout << "HEAP SIZE = " << heap->heapSize() << std::endl;
+	std::cout << "MAXIMUM (" << max.j<< " " << max.m << ")" << std::endl;
+	std::cout << "# "; printSubTree(root);
 	return;
 }
 
@@ -546,9 +546,9 @@ void vektor::printHeap() { heap->printHeap(); return; }
 void vektor::printSubTree(element *z) {
 	if (z==leaf) { return; }
 	else {
-		cout << "(" << z->key << " " << z->stored << " " << z->color << ") [" << z->heap_ptr << "]"<<endl;
-		cout << "L "; printSubTree(z->left); cout << endl;
-		cout << "R "; printSubTree(z->right); cout << endl;
+		std::cout << "(" << z->key << " " << z->stored << " " << z->color << ") [" << z->heap_ptr << "]"<<std::endl;
+		std::cout << "L "; printSubTree(z->left); std::cout << std::endl;
+		std::cout << "R "; printSubTree(z->right); std::cout << std::endl;
 	}
 	return;
 }
